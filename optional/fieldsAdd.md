@@ -1,4 +1,4 @@
-```
+
 {
   "instant": {
     "epochSecond": 1663941471,
@@ -17,4 +17,3 @@
   "logging.googleapis.com/traceSampled": "false",
   "time": "2022-09-23T13:57:51.624Z"
 }
-```
