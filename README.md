@@ -5,3 +5,12 @@ This repo contains DQL examples to parse, filter and summarize data from the log
 ## Contribution
 This is a work in progress repo. If you have examples that you wish to share, please make a pull request.
 
+## Examples
+
+### 1. Filter data based upon event type and then summarize the results
+```
+fetch bizevents
+| filter event.type == "com.easytrade.deposit-money"
+| fields cardType, amount
+| summarize sum(toDouble( amount)), by:{cardType}
+```
