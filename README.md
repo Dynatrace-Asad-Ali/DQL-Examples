@@ -20,7 +20,7 @@ fetch bizevents
 
 ### Filter the data and then parse the JSON within the content
 
-Optional [fieldsAdd](https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md#:~:text=%7B%20%22instant%22%3A%20%7B%20%22epochSecond%22%3A%201663941471,23T13%3A57%3A51.624Z%22%20%7D)
+Optional [fieldsAdd](https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md#:~:text=%7C%20fieldsAdd%20content%20%3D%20%22%7B%20%5C%22instant,23T13%3A57%3A51.624Z%5C%22%20%7D%22)
 
 ```
 fetch logs, from:now()-3h
