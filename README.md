@@ -20,26 +20,7 @@ fetch bizevents
 
 ### Filter the data and then parse the JSON within the content
 
-```
-{
-  "instant": {
-    "epochSecond": 1663941471,
-    "nanoOfSecond": 624155000
-  },
-  "thread": "grpc-default-executor-11305",
-  "level": "INFO",
-  "loggerName": "hipstershop.AdService",
-  "message": "received ad request (context_words=[clothing, tops])",
-  "endOfBatch": false,
-  "loggerFqcn": "org.apache.logging.log4j.spi.AbstractLogger",
-  "threadId": 12158,
-  "threadPriority": 5,
-  "logging.googleapis.com/trace": "00000000000000000000000000000000",
-  "logging.googleapis.com/spanId": "0000000000000000",
-  "logging.googleapis.com/traceSampled": "false",
-  "time": "2022-09-23T13:57:51.624Z"
-}
-```
+Optional [fieldsAdd|https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md#:~:text=%7B%20%22instant%22%3A%20%7B%20%22epochSecond%22%3A%201663941471,23T13%3A57%3A51.624Z%22%20%7D]
 
 ```
 fetch logs, from:now()-3h
