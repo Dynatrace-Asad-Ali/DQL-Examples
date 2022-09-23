@@ -10,6 +10,17 @@ For some of the queries, a fieldsAdd is added before the query. This is done to 
 
 ## Examples
 
+### Calculate the age in seconds and minutes of the most recent entry in the log file
+
+```
+fetch logs, from:now() -6h
+| filter loglevel == "ERROR"
+| limit 1
+| fieldsAdd age_seconds = (now()-timestamp)/1000000000
+| fieldsAdd age_minutes = age_seconds / 60
+| fields timestamp, age_seconds , age_minutes 
+```
+
 ### Filter data based upon event type and then summarize the results
 ```
 fetch bizevents
