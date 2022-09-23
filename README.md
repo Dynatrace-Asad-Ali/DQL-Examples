@@ -32,3 +32,17 @@ fetch logs, from:now()-3h
 | fields msg,text, keyword
 | summarize count=count(), by:{keyword}
 ```
+
+### Filter
+
+Optional [fieldsAdd](https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md#:~:text=%7C%20fieldsAdd%20content%20%3D%20%22%5B2022,Email%27%2C%27Hotline%27%2C%27AccountManager%27%5D%5C%22%7D%5D%5D%22)
+```
+fetch logs, from:now()-60m
+| filter k8s.namespace.name == "easytrade"
+| filter dt.process.name == "npm offerservice-*"
+| filter contains(content, "Response:")
+| parse content, "punct{1,1}:p1 timestamp('yyyy-MM-dd HH:mm:ss'):t punct{1,1}:p2 LD:text 'Response: ' string:pj"
+| parse pj, "JSON_array:pj1"
+| parse pj1[0][0], "JSON:pj1_0"
+| fields content,pj1_0[id], pj1_0[name]
+```
