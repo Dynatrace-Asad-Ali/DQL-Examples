@@ -18,6 +18,17 @@ fetch bizevents
 | summarize sum(toDouble( amount)), by:{cardType}
 ```
 
+### Summarizing quantity by products in the log file
+```
+fetch logs, from:now()-60m
+| filter dt.process.name == "HipsterShop: cartservice"
+| filter contains(content, "AddItemAsync")
+| parse content, "LD:text 'productId=' alnum:product ', ' 'quantity=' int:qty"
+| fields content, product, qty
+// Summarize the qty by product
+| summarize count=count(), sum(qty), by:{product}
+```
+
 ### Filter the data and then parse the JSON within the content
 
 ```
@@ -31,7 +42,7 @@ fetch logs, from:now()-3h
 | summarize count=count(), by:{keyword}
 ```
 
-### Filter
+### Parsing log file that has an array of array of JSON
 
 ```
 fetch logs, from:now()-60m
@@ -42,25 +53,6 @@ fetch logs, from:now()-60m
 | parse pj, "JSON_array:pj1"
 | parse pj1[0][0], "JSON:pj1_0"
 | fields content,pj1_0[id], pj1_0[name]
-```
-
-### Filter
-```
-fetch logs, from:now()-60m
-| filter dt.process.name == "HipsterShop: cartservice"
-| filter contains(content, "AddItemAsync")
-| parse content, "LD:text 'productId=' alnum:product ', ' 'quantity=' int:qty"
-| fields content, product, qty
-```
-
-### Filter
-```
-fetch logs, from:now()-60m
-| filter dt.process.name == "HipsterShop: cartservice"
-| filter contains(content, "AddItemAsync")
-| parse content, "LD:text 'productId=' alnum:product ', ' 'quantity=' int:qty"
-| fields content, product, qty
-| summarize count=count(), sum(qty), by:{product}
 ```
 
 ### Parse the content for http response code and count the number of times the http request has succeeded or failed
