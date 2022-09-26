@@ -10,6 +10,15 @@ For some of the queries, a fieldsAdd is added before the query. This is done to 
 
 ## Examples
 
+### Search for INFO and WARN messages.
+
+This query uses the in(<needle>, <haystack>) command
+
+```
+fetch logs
+| filter in(loglevel, array("INFO", "WARN"))
+```
+
 ### Calculate the age in seconds and minutes of the most recent entry in the log file
 
 ```
@@ -30,6 +39,9 @@ fetch bizevents
 ```
 
 ### Summarizing quantity by products in the log file
+
+Optional: [Optional fieldsadd 2](https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md)
+
 ```
 fetch logs, from:now()-60m
 | filter dt.process.name == "HipsterShop: cartservice"
