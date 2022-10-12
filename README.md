@@ -40,7 +40,7 @@ fetch bizevents
 
 ### Summarizing quantity by products in the log file
 
-Optional: [Optional fieldsadd 2](https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md)
+Optional: [fieldsadd 2](https://github.com/Dynatrace-Asad-Ali/DQL-Examples/blob/main/optional/fieldsAdd.md)
 
 ```
 fetch logs, from:now()-60m
@@ -150,4 +150,14 @@ fetch logs
 | fieldsAdd aString = contains(logData, "StringA"), bString = contains(logData, "StringB")
 | fields logData , onlyOneExist = toDouble(aString) + toDouble( bString)
 | filter onlyOneExist == 1
+```
+
+### Summarizing log count by the day of the week.
+
+```
+fetch logs
+| summarize logcount=count(), by:{ day = toLong(formatTimestamp(timestamp,format:"d"))}
+| filter day < 8
+| fieldsAdd Day=if(day==1,"Monday",else:if(day==2,"Tuesday",else:if(day==3,"Wednesday",else:if(day==4,"Thursday",else:if(day==5,"Friday",else:if(day==6,"Saturday",else:"Sunday"))))))
+| fields logcount,Day
 ```
