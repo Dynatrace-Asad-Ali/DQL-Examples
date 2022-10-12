@@ -152,7 +152,7 @@ fetch logs
 | filter onlyOneExist == 1
 ```
 
-### Summarizing log count by the day of the week.
+### Summarize log count by the day of the week.
 
 ```
 fetch logs
@@ -160,4 +160,11 @@ fetch logs
 | filter day < 8
 | fieldsAdd Day=if(day==1,"Monday",else:if(day==2,"Tuesday",else:if(day==3,"Wednesday",else:if(day==4,"Thursday",else:if(day==5,"Friday",else:if(day==6,"Saturday",else:"Sunday"))))))
 | fields logcount,Day
+```
+
+### Summarize log count by month
+
+```
+fetch logs, from:now()-60d
+| summarize count(), by:{ month = formatTimestamp(timestamp,format:"YYYY-MM")}
 ```
