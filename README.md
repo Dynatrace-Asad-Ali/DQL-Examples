@@ -139,6 +139,17 @@ fetch logs, from:now()-5d
 | fields instantData[epochSecond]
 ```
 
+### Another KVP keyword example
+
+```
+fetch logs
+| limit 1
+| fields c = "2022-09-14 15:00:03.198 UTC INFO [pool-3-thread-53] FunctionInvocation: Execution of function contextType=ADHOC, tenantId=mue45676, userId=58eb9099-886c-420f-9639-63b7de5375a1, memorySize=268435456B, executionType=ASYNC, callerAppId=<none>, started=2022-09-14T15:00:02.589665531, ended=2022-09-14T15:00:03.198538189, duration=608 ms"
+| parse c, "LD KVP{WORD:key '=' DATA:value (', ' | EOS )}:attr"
+|  fields attr[executionType]
+
+```
+
 ### Parsing entries in the log file and returning true only if StringA and StringB did not occur at the same time in the same line
 
 ```
