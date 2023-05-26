@@ -1,11 +1,15 @@
 # DQL-Examples
+
 ## Purpose
-This repo contains DQL examples to parse, filter and summarize data from the logs. The intention of this repo is for education and learning purpose only. Some of the DQL may not be fully optimized. All the DQL queries used here have been tested against demo.live environment. 
+
+This repo contains DQL examples to parse, filter and summarize data from the logs. The intention of this repo is for education and learning purpose only. Some of the DQL may not be fully optimized. All the DQL queries used here have been tested against demo.live environment.
 
 ## Contribution
+
 This is a work in progress repo. If you have examples that you wish to share, please make a pull request.
 
 ### Note
+
 For some of the queries, a fieldsAdd is added before the query. This is done to give an example of the format of the content field. Since these queries are tested against the demo env which in turn can have different data at different times, the filtering added to the query may not bring the exact content that is required for the query to work. In that case, add the fieldsAdd section to your query to see it work.
 
 ## Examples
@@ -27,10 +31,11 @@ fetch logs, from:now() -6h
 | limit 1
 | fieldsAdd age_seconds = (now()-timestamp)/1000000000
 | fieldsAdd age_minutes = age_seconds / 60
-| fields timestamp, age_seconds , age_minutes 
+| fields timestamp, age_seconds , age_minutes
 ```
 
 ### Filter data based upon event type and then summarize the results
+
 ```
 fetch bizevents
 | filter event.type == "com.easytrade.deposit-money"
@@ -79,6 +84,7 @@ fetch logs, from:now()-60m
 ```
 
 ### Parse the content for http response code and count the number of times the http request has succeeded or failed
+
 ```
 fetch logs, from:now()-3h
 | filter contains(content, "POST /cart/checkout")
@@ -102,7 +108,7 @@ fetch logs, from:now()-5d
 | parse msg, "LD 'currency_code' punct{2,2} string:currency LD:text 'units' punct{3,3} int:unit LD 'nanos' punct{2,2} long:nanos"
 | fieldsAdd totalUnitString = concat( unit, ".", nanos)
 | fieldsAdd totalUnit = toDouble( totalUnitString)
-| fields msg,currency, totalUnit 
+| fields msg,currency, totalUnit
 // Additonal exercise
 | summarize count(), by:{bin(totalUnit, 100)}
 ```
@@ -178,4 +184,41 @@ fetch logs
 ```
 fetch logs, from:now()-60d
 | summarize count(), by:{ month = formatTimestamp(timestamp,format:"YYYY-MM")}
+```
+
+### Compare errors between this week and last week
+
+```
+fetch logs, from:now()-7d
+| filter isNotNull(dt.kubernetes.workload.name) AND matchesValue(loglevel, "WARN")
+| fields loglevel, dt.kubernetes.workload.name
+| summarize nowTime = count(), by:{dt.kubernetes.workload.name,loglevel}
+| lookup [fetch logs, from:-14d, to:-7d
+| filter isNotNull(dt.kubernetes.workload.name) AND matchesValue(loglevel, "WARN")
+| fields loglevel, dt.kubernetes.workload.name
+| summarize compareTime = count(), by:{loglevel, dt.kubernetes.workload.name}], sourceField:dt.kubernetes.workload.name, lookupField:dt.kubernetes.workload.name
+| summarize count(),by:{dt.kubernetes.workload.name, nowTime, lookup.compareTime, loglevel, lookup.loglevel}
+| sort nowTime desc
+```
+
+### In KVP, if the fieldname is a number, then put backticks to parse it
+
+```
+fetch logs
+| fields valuelist = record('49'="john)
+| fields valuelist[`49`], valuelist
+```
+
+### Pattern Expression Macros
+
+#### Extracting the last part of the url after the number
+
+```
+fetch logs
+| limit 1
+| fields event.provider = "/cliente/api/beta/v10/configurator/1195289365786401048472934938283839397473/agregar/borro"
+| filter contains(event.provider, "borro")
+| parse event.provider, "$path = LD '/borro';
+$num = [0-9]{30,200};
+LD $num $path:path"
 ```
